@@ -1,0 +1,46 @@
+version: '3'  # 版本为123，已docker engine为例，一般为3 docker1.10之前为1
+services:
+  sgblog:
+    container_name: sangeng_blog
+    image: sangeng_blog
+    ports:
+      - 7777:7777
+    networks:
+      - net_sgblog
+    depends_on:
+      - mysql
+      - redis
+  mysql:
+    container_name: mysql-sangeng
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: sg_blog
+      MYSQL_ROOT_PASSWORD: 123456
+      TZ: Asia/Shanghai
+    volumes:
+      - ~/devTools/mysql/data:/var/lib/mysql
+      - ~/devTools/mysql/conf/my.cnf:/etc/my.cnf
+      - ~/devTools/mysql/init:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+    networks:
+      - net_sgblog
+  redis:
+    image: redis
+    container_name: redis-sangeng
+    volumes:
+      - /Users/liuzihan/devTools/redis/datadir:/data
+      - /Users/liuzihan/devTools/redis/conf/redis.conf:/etc/redis/redis.conf
+      - /Users/liuzihan/devTools/redis/logs:/logs
+    command: redis-server --requirepass 123456
+    ports:
+      - 6379:6379
+    networks:
+      - net_sgblog
+
+networks:  # 定义网络
+  net_sgblog:
+    driver: bridge  # 桥接模式
