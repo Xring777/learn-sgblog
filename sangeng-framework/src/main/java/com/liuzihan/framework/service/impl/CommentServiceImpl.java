@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liuzihan.framework.constants.SystemConstants;
 import com.liuzihan.framework.domain.ResponseResult;
+import com.liuzihan.framework.domain.entity.User;
 import com.liuzihan.framework.domain.vo.CommentVo;
 import com.liuzihan.framework.domain.vo.PageVo;
 import com.liuzihan.framework.enums.AppHttpCodeEnum;
@@ -42,7 +43,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         wrapper.eq(Comment::getRootId, SystemConstants.IS_ROOT_COMMENT);
         // 文章类型
         wrapper.eq(Comment::getType,commentType);
-        wrapper.orderByAsc(Comment::getCreateTime);
+        wrapper.orderByDesc(Comment::getCreateTime);
 
         // 使用 page 封装
         Page page = new Page<Comment>(pageNum, pageSize);
@@ -106,8 +107,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         CommentVo commentVo = BeanCopyUtils.copyBean(comment, CommentVo.class);
 
         //通过createBy查询用户的昵称并赋值
-        String nickName = userService.getById(commentVo.getCreateBy()).getNickName();
+        User byId = userService.getById(commentVo.getCreateBy());
+        String nickName = byId.getNickName();
         commentVo.setUsername(nickName);
+        commentVo.setAvatar(byId.getAvatar());
         //通过toCommentUserId查询用户的昵称并赋值
         //如果toCommentUserId不为-1才进行查询
         if (commentVo.getToCommentUserId() != SystemConstants.IS_ROOT_COMMENT) {

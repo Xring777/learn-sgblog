@@ -4,6 +4,8 @@ import com.liuzihan.framework.domain.ResponseResult;
 import com.liuzihan.framework.enums.AppHttpCodeEnum;
 import com.liuzihan.framework.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -18,6 +20,24 @@ public class GlobalExceptionHandler {
         //从异常对象中获取信息封装返回
         return ResponseResult.errorResult(e.getCode(),e.getMsg());
     }
+
+    @ExceptionHandler(value = BadCredentialsException.class)
+    public ResponseResult systemExceptionHandler(BadCredentialsException e){
+        //打印异常信息
+        log.error("出现了异常！",e);
+        //从异常对象中获取信息封装返回
+        return ResponseResult.errorResult(AppHttpCodeEnum.LOGIN_ERROR);
+    }
+
+    @ExceptionHandler(value = InternalAuthenticationServiceException.class)
+    public ResponseResult systemExceptionHandler(InternalAuthenticationServiceException e){
+        //打印异常信息
+        log.error("出现了异常！",e);
+        //从异常对象中获取信息封装返回
+        return ResponseResult.errorResult(AppHttpCodeEnum.LOGIN_ERROR);
+    }
+
+
 
     @ExceptionHandler(value = Exception.class)
     public ResponseResult defaultExceptionHandler(Exception e){

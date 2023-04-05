@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.liuzihan.framework.constants.SystemConstants;
 import com.liuzihan.framework.domain.entity.LoginUser;
 import com.liuzihan.framework.domain.entity.User;
+import com.liuzihan.framework.enums.AppHttpCodeEnum;
+import com.liuzihan.framework.exception.SystemException;
 import com.liuzihan.framework.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

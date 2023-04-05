@@ -2,7 +2,8 @@ version: '3'  # 版本为123，已docker engine为例，一般为3 docker1.10之
 services:
   sgblog:
     container_name: sangeng_blog
-    image: sangeng_blog
+    build: ./
+#    image: sangeng_blog
     ports:
       - 7777:7777
     networks:

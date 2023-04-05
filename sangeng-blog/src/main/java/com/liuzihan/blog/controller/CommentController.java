@@ -6,10 +6,7 @@ import com.liuzihan.framework.domain.ResponseResult;
 import com.liuzihan.framework.domain.entity.Comment;
 import com.liuzihan.framework.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/comment")
@@ -25,7 +22,8 @@ public class CommentController {
     }
 
     @PostMapping
-    public ResponseResult addComment(Comment comment){
+    @SystemLog(businessName = "添加评论")
+    public ResponseResult addComment(@RequestBody Comment comment){
         return commentService.addComment(comment);
     }
 

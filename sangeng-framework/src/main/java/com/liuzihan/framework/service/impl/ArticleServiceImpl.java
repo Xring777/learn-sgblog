@@ -177,8 +177,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //查询条件
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.like(Article::getTitle, condition).or().
-                like(Article::getSummary, condition).or().
-                like(Article::getContent, condition);
+                like(Article::getSummary, condition);
+//                like(Article::getContent, condition);
         // 状态是正式发布的
         lambdaQueryWrapper.eq(Article::getStatus, SystemConstants.ARTICLE_STATUS_NORMAL);
         // 对isTop进行降序

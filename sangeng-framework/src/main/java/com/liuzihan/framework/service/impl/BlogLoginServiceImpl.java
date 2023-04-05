@@ -6,6 +6,8 @@ import com.liuzihan.framework.domain.entity.LoginUser;
 import com.liuzihan.framework.domain.entity.User;
 import com.liuzihan.framework.domain.vo.BlogUserLoginVo;
 import com.liuzihan.framework.domain.vo.UserInfoVo;
+import com.liuzihan.framework.enums.AppHttpCodeEnum;
+import com.liuzihan.framework.exception.SystemException;
 import com.liuzihan.framework.service.BlogLoginService;
 import com.liuzihan.framework.utils.BeanCopyUtils;
 import com.liuzihan.framework.utils.JwtUtil;
@@ -20,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class BlogLoginServiceImpl implements BlogLoginService {
@@ -36,17 +39,17 @@ public class BlogLoginServiceImpl implements BlogLoginService {
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
         //如果验证失败
         if (Objects.isNull(authenticate)){
-            throw new RuntimeException("用户名或密码错误");
+            throw new SystemException(AppHttpCodeEnum.LOGIN_ERROR);
         }
         //得到userId生成token
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
         if (isAdmin && !loginUser.getUser().getType().equals(SystemConstants.USER_TYPE_ADMIN)){
-            throw new RuntimeException("用户权限不足");
+            throw new SystemException(AppHttpCodeEnum.NO_OPERATOR_AUTH);
         }
         String userId = loginUser.getUser().getId().toString();
         String jwt = JwtUtil.createJWT(userId);
         //将用户信息存入redis
-        redisCache.setCacheObject(SystemConstants.REDIS_PREFIX_LOGIN_USERID+userId,loginUser);
+        redisCache.setCacheObject(SystemConstants.REDIS_PREFIX_LOGIN_USERID+userId,loginUser, 60, TimeUnit.SECONDS);
         //把User转换成UserInfoVo
         UserInfoVo userInfoVo = BeanCopyUtils.copyBean(loginUser.getUser(), UserInfoVo.class);
         BlogUserLoginVo blogUserLoginVo = new BlogUserLoginVo(jwt, userInfoVo);
